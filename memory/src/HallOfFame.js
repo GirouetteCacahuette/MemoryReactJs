@@ -2,13 +2,19 @@ import React from 'react'
 
 import './HallOfFame.css'
 
-const HallOfFame = ({ entries }) => (
+const HallOfFame = ({entries}) => (
     <table className="hallOfFame">
         <tbody>
-        <tr>FIXME</tr>
+        {entries.map(({id, guesses, date, player}) => (
+            <tr key={id}>
+                <td className="guesses">{guesses}</td>
+                <td className="date">{date}</td>
+                <td className="player">{player}</td>
+            </tr>
+        ))}
         </tbody>
     </table>
-)
+);
 
 export default HallOfFame
 
