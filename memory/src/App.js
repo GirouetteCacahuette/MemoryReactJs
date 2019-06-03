@@ -11,7 +11,12 @@ const SIDE = 6;
 const SYMBOLS = '😀🎉💖🎩🐶🐱🦄🐬🌍🌛🌞💫🍎🍌🍓🍐🍟🍿';
 
 class App extends Component {
-    cards = this.generateCards();
+    state = {
+        cards: this.generateCards(),
+        currentPair: [],
+        guesses: 0,
+        matchedCardsIndices: []
+    };
 
     generateCards() {
         const result = [];
@@ -24,18 +29,51 @@ class App extends Component {
         return shuffle(result);
     }
 
+    getFeedbackForCard(index) {
+        const { currentPair, matchedCardsIndices } = this.state;
+        const indexMatched = matchedCardsIndices.includes(index);
+
+        if (currentPair.length < 2) {
+            return indexMatched || index === currentPair[0] ? 'visible' : 'hidden';
+        }
+
+        if (currentPair.includes(index)) {
+            return indexMatched ? 'justMatched' : 'justMismatched';
+        }
+
+        return indexMatched ? 'visible' : 'hidden';
+    }
+
     // Arrow fx for binding
-    handleCardClick = card => {
-        console.log(card, 'clicked', this);
+    handleCardClick = index => {
+        const { currentPair } = this.state;
+
+        if (currentPair.length === 2) {
+            return;
+        }
+
+        if (currentPair.length === 0) {
+            this.setState({ currentPair: [index] });
+            return;
+        }
+
+        this.handleNewPairClosedBy(index);
     };
 
     render() {
-        const won = true;
+        const { cards, guesses, matchedCardsIndices } = this.state;
+        const won = matchedCardsIndices.length === cards.length;
         return (
             <div className="memory">
-                <GuessCount guesses={0} />
-                {this.cards.map((card, index) => (
-                    <Card card={card} feedback={'visible'} onClick={this.handleCardClick} key={index} />
+                <GuessCount guesses={guesses} />
+                {cards.map((card, index) => (
+                    <Card
+                        card={card}
+                        feedback={this.getFeedbackForCard(index)}
+                        index={index}
+                        onClick={this.handleCardClick}
+                        key={index}
+                    />
                 ))}
                 {won && <HallOfFame entries={FAKE_HOF} />}
             </div>
