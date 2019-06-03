@@ -24,9 +24,10 @@ class App extends Component {
         return shuffle(result);
     }
 
-    handleCardClick(card) {
-        console.log(card, 'clicked');
-    }
+    // Arrow fx for binding
+    handleCardClick = card => {
+        console.log(card, 'clicked', this);
+    };
 
     render() {
         const won = true;
